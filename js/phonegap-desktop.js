@@ -1,24 +1,24 @@
 // PhoneGap stub for desktop debugging
 document.addEventListener("DOMContentLoaded", function(){
-    phonegapdebug.internal.initialiseData();
+    phonegapdesktop.internal.initialiseData();
     
     // Map mouse events to touch events
     document.onmousedown = function(e){
-        phonegapdebug.internal.dispatchTouchEvent(e, "touchstart");
-        phonegapdebug.internal.touchActive = true;
-        phonegapdebug.internal.dispatchTouchEvent(e, "touchmove");
+        phonegapdesktop.internal.dispatchTouchEvent(e, "touchstart");
+        phonegapdesktop.internal.touchActive = true;
+        phonegapdesktop.internal.dispatchTouchEvent(e, "touchmove");
     };
     
     document.onmousemove = function(e){
-        if (phonegapdebug.internal.touchActive) {
-            phonegapdebug.internal.dispatchTouchEvent(e, "touchmove");
+        if (phonegapdesktop.internal.touchActive) {
+            phonegapdesktop.internal.dispatchTouchEvent(e, "touchmove");
         }
     };
     
     document.onmouseup = function(e){
-        phonegapdebug.internal.dispatchTouchEvent(e, "touchmove");
-        phonegapdebug.internal.touchActive = false;
-        phonegapdebug.internal.dispatchTouchEvent(e, "touchend");
+        phonegapdesktop.internal.dispatchTouchEvent(e, "touchmove");
+        phonegapdesktop.internal.touchActive = false;
+        phonegapdesktop.internal.dispatchTouchEvent(e, "touchend");
     };
     
     document.removeEventListener("DOMContentLoaded", arguments.callee, false);
@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", function(){
 }, false);
 
 
-var phonegapdebug = {}
-phonegapdebug.internal = {
+var phonegapdesktop = {}
+phonegapdesktop.internal = {
     debugdata: {},
     
     initialiseData: function(){
@@ -37,8 +37,8 @@ phonegapdebug.internal = {
         this.parseConfigFile('debugdata.json');
         
         // Check if the default specifies an alternate file to use
-        if (debugdata.internal.currentFile) {
-            this.parseConfigFile(debugdata.internal.currentFile);
+        if (this.debugdata.internal.currentFile) {
+            this.parseConfigFile(this.debugdata.internal.currentFile);
         }
         
     },
@@ -46,20 +46,43 @@ phonegapdebug.internal = {
     parseConfigFile: function(fileName){
         var data = '';
         var jsonReq = new XMLHttpRequest();
-		try {
-	        jsonReq.open("GET", fileName, false);
-		}
-		catch (err){
-			jsonReq = new ActiveXObject('Microsoft.XMLHTTP');
-		    jsonReq.open("GET", fileName, false);
-		}
-		jsonReq.send();
-		
+        try {
+            jsonReq.open("GET", fileName, false);
+        } 
+        catch (err) {
+            jsonReq = new ActiveXObject('Microsoft.XMLHTTP');
+            jsonReq.open("GET", fileName, false);
+        }
+        jsonReq.send();
+        
         data = jsonReq.responseText;
         
         
-        debugdata = this.parseJSON(data);
+        this.debugdata = this.mergeRecursive(this.debugdata, this.parseJSON(data));
     },
+    
+	// mergeRecursive function copied from http://stackoverflow.com/questions/171251/how-can-i-merge-properties-of-two-javascript-objects-dynamically
+    mergeRecursive: function(obj1, obj2){
+    
+        for (var p in obj2) {
+            try {
+                // Property in destination object set; update its value.
+                if (obj2[p].constructor == Object) {
+                    obj1[p] = mergeRecursive(obj1[p], obj2[p]);
+                }
+                else {
+                    obj1[p] = obj2[p];
+                }
+            } 
+            catch (e) {
+                // Property in destination object not set; create it and set its value.
+                obj1[p] = obj2[p];
+            }
+        }
+        
+        return obj1;
+    },
+    
     
     // parseJSON function copied from http://stackoverflow.com/questions/3238457/getjson-without-jquery
     parseJSON: function(data){
@@ -113,11 +136,11 @@ phonegapdebug.internal = {
     getDebugValue: function(nodeName, element){
         var indexPrefix = '_lastIndex_';
         var useIndex = 0;
-        var node = debugdata[nodeName];
+        var node = this.debugdata[nodeName];
         
         if (Object.prototype.toString.call(node[element]) === '[object Array]') {
             // Pick an element from the array
-            if (debugdata.internal.arraySequence) {
+            if (this.debugdata.internal.arraySequence) {
                 if (typeof(node[indexPrefix + element]) == 'number') {
                     useIndex = node[indexPrefix + element] + 1;
                     if (useIndex >= node[element].length) {
@@ -139,28 +162,30 @@ phonegapdebug.internal = {
         }
     },
     randomException: function(){
-        return (Math.random() < debugdata.internal.exceptionThreshold);
+        return (Math.random() < this.debugdata.internal.exceptionThreshold);
     },
     
     setDynamicProperty: function(obj, debugElement, debugNode){
     
         if (obj.__defineGetter__) {
             obj.__defineGetter__(debugNode, function(){
-                return phonegapdebug.internal.getDebugValue(debugElement, debugNode);
+                return phonegapdesktop.internal.getDebugValue(debugElement, debugNode);
             });
         }
         if (Object.defineProperty) {
             Object.defineProperty(obj, debugNode, {
                 get: function(){
-                    return phonegapdebug.internal.getDebugValue(debugElement, debugNode);
+                    return phonegapdesktop.internal.getDebugValue(debugElement, debugNode);
                 }
             });
         }
         
     }
-    
 }
+// End of PhoneGapDesktop internal methods and properties
 
+
+// Start of PhoneGap API stub functions
 navigator.accelerometer = {
     getCurrentAcceleration: function(accelerometerSuccess, accelerometerError){
     },
@@ -172,11 +197,11 @@ navigator.accelerometer = {
 
 navigator.camera = {
     getPicture: function(cameraSuccess, cameraError, cameraOptions){
-        if (phonegapdebug.internal.randomException()) {
+        if (phonegapdesktop.internal.randomException()) {
             cameraError('A random error was generated');
         }
         else {
-            cameraSuccess(phonegapdebug.internal.getDebugValue('camera', 'pictures_url'));
+            cameraSuccess(phonegapdesktop.internal.getDebugValue('camera', 'pictures_url'));
         }
     }
 };
@@ -224,11 +249,11 @@ navigator.contacts = {
 };
 
 window.device = {};
-phonegapdebug.internal.setDynamicProperty(window.device, "device", "name");
-phonegapdebug.internal.setDynamicProperty(window.device, "device", "phonegap");
-phonegapdebug.internal.setDynamicProperty(window.device, "device", "platform");
-phonegapdebug.internal.setDynamicProperty(window.device, "device", "uuid");
-phonegapdebug.internal.setDynamicProperty(window.device, "device", "version");
+phonegapdesktop.internal.setDynamicProperty(window.device, "device", "name");
+phonegapdesktop.internal.setDynamicProperty(window.device, "device", "phonegap");
+phonegapdesktop.internal.setDynamicProperty(window.device, "device", "platform");
+phonegapdesktop.internal.setDynamicProperty(window.device, "device", "uuid");
+phonegapdesktop.internal.setDynamicProperty(window.device, "device", "version");
 
 // TODO How to fire events?
 
