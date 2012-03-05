@@ -1,0 +1,13 @@
+{
+	"barcodescanner" : {
+		"scans" : [
+			{ "text" : "1234567890123",
+				"format" : "ean13",
+				"cancelled" : "false"},
+			{ "text" : "9876543210987",
+				"format" : "ean13",
+				"cancelled" : "false"}
+
+		]
+	}
+}
