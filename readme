@@ -1,0 +1,19 @@
+The aim of this project is to allow developers to use PhoneGap in a desktop browser.
+
+All PhoneGap API calls will be simulated and the data returned is determined by json files.
+
+
+Current Status:
+
+Implemented basic structure
+Stubbed most API calls
+Implemented camera.getPicture (only with Url option)
+Implemented example plugin (barcodescanner)
+Tested in IE, Firefox and Chrome
+
+
+Next Steps:
+
+Stub remaining API calls
+Provide documentation on how to use
+Start implementing each API call (and test desktop brwosers against Android implementation)
