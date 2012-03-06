@@ -3,6 +3,15 @@
     "arraySequence" : true,
     "exceptionThreshold" : 0
   },
+  
+  "accelerometer" : {
+  	"acceleration" : [
+		{"x" : 1, "y": 0, "z": 0, "timestamp": "2012-01-01 15:30:00"},
+		{"x" : 0, "y": 1, "z": 0, "timestamp": "2012-01-01 15:30:20"},
+		{"x" : 0, "y": 0, "z": 1, "timestamp": "2012-01-01 15:30:40"},
+		{"x" : -1, "y": 0, "z": -1, "timestamp": "2012-01-01 15:31:00"}
+	]
+  },
 
   "camera":{
     "pictures_url":[
@@ -11,7 +20,13 @@
       "http://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Diatomaceous_Earth_BrightField.jpg/300px-Diatomaceous_Earth_BrightField.jpg",
       "http://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Sunset_2007-1.jpg/800px-Sunset_2007-1.jpg",
       "http://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/GD_Kennedy_SLV_AllanGreen.jpg/800px-GD_Kennedy_SLV_AllanGreen.jpg"
-    ]
+    ],
+	"pictures_base64":[
+	  "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAwUExURQAm///YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAt4U8AAAAJcEhZcwAADsIAAA7CARUoSoAAAAAVSURBVBjTY2AAAkEgYKCQQQ0zgAAAMp8EQTkXHrEAAAAASUVORK5CYII=",
+	  "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAwUExURX8AAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfJIa8AAAAJcEhZcwAADsIAAA7CARUoSoAAAAAUSURBVBjTYxAEAgYQoJBBBSNADAAynwRBhKNiuAAAAABJRU5ErkJggg==",
+	  "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAwUExURQAAAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFulh5UAAAAJcEhZcwAADsIAAA7CARUoSoAAAAAVSURBVBjTY2AAAkEgYKCQQQ0zgAAAMp8EQTkXHrEAAAAASUVORK5CYII=",
+	  "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAwUExURQD/If8A3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR4exUAAAAJcEhZcwAADsIAAA7CARUoSoAAAAAUSURBVBjTYxAEAgYQoJBBBSNADAAynwRBhKNiuAAAAABJRU5ErkJggg=="
+	]
   },
 
   "device":{

@@ -21,6 +21,15 @@ document.addEventListener("DOMContentLoaded", function(){
         phonegapdesktop.internal.dispatchTouchEvent(e, "touchend");
     };
     
+	// Map Ctrl+Alt+{Key} to fire events
+	document.onkeydown = function(e){
+		e = e || window.event;
+		if (e.altKey && e.ctrlKey)
+		{
+			phonegapdesktop.internal.fireEvent(e.keyCode);
+		}
+	}
+	
     document.removeEventListener("DOMContentLoaded", arguments.callee, false);
     var readyEvent = document.createEvent('HTMLEvents');
     readyEvent.initEvent('deviceready', true, true);
@@ -140,7 +149,7 @@ phonegapdesktop.internal = {
         
         if (Object.prototype.toString.call(node[element]) === '[object Array]') {
             // Pick an element from the array
-            if (this.debugdata.internal.arraySequence) {
+            if (node.arraySequence || this.debugdata.internal.arraySequence) {
                 if (typeof(node[indexPrefix + element]) == 'number') {
                     useIndex = node[indexPrefix + element] + 1;
                     if (useIndex >= node[element].length) {
@@ -161,7 +170,46 @@ phonegapdesktop.internal = {
             return node[element];
         }
     },
-    randomException: function(){
+	
+	fireEvent: function(keyCode){
+		switch (keyCode) {
+			case 80: 	// <P>ause
+				break;
+			case 82: 	// <R>esume
+				break;
+			case 79:	// <O>nline
+				break;
+			case 70:	// O<f>fline
+				break;
+			case 66:	// <B>ackbutton
+				break;
+			case 67:	// Battery <C>ritical
+				alert('Battery critical');
+				break;
+			case 76:	// Battery <L>ow
+				break;
+			case 65:	// B<a>ttery Status
+				break;
+			case 77:	// <M>enu button
+				break;
+			case 83:	// <S>earch
+				break;
+			case 84:	// S<t>art call
+				break;
+			case 69:	// <E>nd call
+				break;
+			case 68:	// Volume <D>own
+				break;
+			case 85:	// Volume <U>p 
+				break;
+		}
+	},
+	
+    randomException: function(sectionName){
+		if (sectionName && this.debugdata[sectionName].exceptionThreshold) {
+			return (Math.random() < this.debugdata[sectionName].exceptionThreshold);
+		}
+		
         return (Math.random() < this.debugdata.internal.exceptionThreshold);
     },
     
@@ -180,7 +228,22 @@ phonegapdesktop.internal = {
             });
         }
         
-    }
+    },
+	
+	intervalFunction : function(successCallback, errorCallback, frequency, nodeName, elementName){
+		return setInterval(function(){
+			if (phonegapdesktop.internal.randomException(nodeName)){
+				errorCallback('A random error from ' + nodeName);
+			}
+			else {
+				successCallback(phonegapdesktop.internal.getDebugValue(nodeName, elementName));
+			}
+		}, frequency);
+	},
+	
+	cancelIntervalFunction: function(functionID){
+		clearInterval(functionID);
+	}
 }
 // End of PhoneGapDesktop internal methods and properties
 
@@ -188,29 +251,58 @@ phonegapdesktop.internal = {
 // Start of PhoneGap API stub functions
 navigator.accelerometer = {
     getCurrentAcceleration: function(accelerometerSuccess, accelerometerError){
+		if (phonegapdesktop.internal.randomException("accelerometer")) {
+			accelerometerError('A randome error was generated');
+		}
+		else {
+			accelerometerSuccess(phonegapdesktop.internal.getDebugValue('accelerometer', 'acceleration'));
+		}
     },
     watchAcceleration: function(accelerometerSuccess, accelerometerError, accelerometerOptions){
+		return phonegapdesktop.internal.intervalFunction(accelerometerSuccess, accelerometerError, accelerometerOptions.frequency, "accelerometer", "acceleration");
     },
     clearWatch: function(watchID){
+		phonegapdesktop.internal.cancelIntervalFunction(watchID);
     }
 };
 
 navigator.camera = {
     getPicture: function(cameraSuccess, cameraError, cameraOptions){
-        if (phonegapdesktop.internal.randomException()) {
+        if (phonegapdesktop.internal.randomException("camera")) {
             cameraError('A random error was generated');
         }
         else {
-            cameraSuccess(phonegapdesktop.internal.getDebugValue('camera', 'pictures_url'));
+			if (cameraOptions && cameraOptions.destinationType != undefined && cameraOptions.destinationType == Camera.DestinationType.DATA_URL) {
+				cameraSuccess(phonegapdesktop.internal.getDebugValue('camera', 'pictures_base64'));
+			}
+			else {
+				cameraSuccess(phonegapdesktop.internal.getDebugValue('camera', 'pictures_url'));
+			}
         }
     }
 };
 
+// Constants used for camera options
 var Camera = {
     DestinationType: {
         DATA_URL: 0, // Return base64 encoded string
         FILE_URI: 1 // Return file uri (content://media/external/images/media/2 for Android)
-    }
+    },
+	PictureSourceType: {
+		PHOTOLIBRARY: 0,
+		CAMERA: 1,
+		SAVEDPHOTOALBUM: 2
+	},
+	EncodingType: {
+		JPEG: 0, // Return JPEG encoded image
+		PNG: 1 // Return PNG encoded image
+	},
+	
+	MediaType: {
+		PICTURE: 0, // allow selection of still pictures only. DEFAULT. Will return format specified via DestinationType
+		VIDEO: 1, // allow selection of video only, WILL ALWAYS RETURN FILE_URI
+		ALLMEDIA: 2 // allow selection from all media types
+	}
 };
 
 navigator.device = {};
@@ -255,9 +347,7 @@ phonegapdesktop.internal.setDynamicProperty(window.device, "device", "platform")
 phonegapdesktop.internal.setDynamicProperty(window.device, "device", "uuid");
 phonegapdesktop.internal.setDynamicProperty(window.device, "device", "version");
 
-// TODO How to fire events?
-
-// TODO File interactions?
+// NOTE: FileAPI should be supported by browsers NEED TO CHECK
 
 navigator.geolocation = {
     getCurrentPosition: function(geolocationSuccess, geolocationError, geolocationOptions){
@@ -305,7 +395,7 @@ navigator.notification = {
     }
 };
 
-// TODO add storage properties as needed (WebKit supports web-SQL)
+// NOTE: Storage functions should be provided by the browser
 
 // This is not documented in the API for some reason
 navigator.app = {
