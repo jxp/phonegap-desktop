@@ -2,6 +2,8 @@ The aim of this project is to allow developers to use PhoneGap in a desktop brow
 
 All PhoneGap API calls will be simulated and the data returned is determined by json files.
 
+See the Wiki for some notes on getting started.
+
 
 Current Status:
 
