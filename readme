@@ -6,14 +6,11 @@ All PhoneGap API calls will be simulated and the data returned is determined by 
 Current Status:
 
 Implemented basic structure
-Stubbed most API calls
-Implemented camera.getPicture (only with Url option)
-Implemented example plugin (barcodescanner)
+Implemented code for all API methods
 Tested in IE, Firefox and Chrome
 
 
 Next Steps:
 
-Stub remaining API calls
 Provide documentation on how to use
-Start implementing each API call (and test desktop brwosers against Android implementation)
+Complete full testing
