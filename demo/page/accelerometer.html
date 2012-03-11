@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+
+        <title>PhoneGap Kitchen Sink - Accelerometer</title>
+
+        <link rel="stylesheet" href="style/jquery.mobile-1.0rc1.min.css" />
+
+        <script type="text/javascript" src="js/jquery-1.6.4.min.js"></script>
+        <script type="text/javascript" src="phonegap.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.0rc1.min.js"></script>
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    </head>
+    <body>
+        <div data-role="page" id="accelerometer">
+
+            <div data-role="header">
+                <a href="#" data-rel="back" data-icon="arrow-l">Back</a>
+                <h1>Accelerometer</h1>
+            </div>
+
+            <div data-role="content">
+                <div data-role="fieldcontain">
+                    <label for="acceleration-x">Acceleration X:</label>
+                    <input type="range" name="acceleration-x" id="acceleration-x" value="0" min="0" max="100" />
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="acceleration-y">Acceleration Y:</label>
+                    <input type="range" name="acceleration-y" id="acceleration-y" value="0" min="0" max="100" />
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="acceleration-z">Acceleration Z:</label>
+                    <input type="range" name="acceleration-z" id="acceleration-z" value="0" min="0" max="100" />
+                </div>
+            </div>
+
+            <script type="text/javascript" src="../js/api/accelerometer.js"></script>
+
+        </div>
+    </body>
+</html>
