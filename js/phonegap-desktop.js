@@ -1,41 +1,47 @@
 // PhoneGap simulator (shim) for desktop debugging
+// Written by Jonathan Prince (except where noted) in March-2012
 
 // Window.onload should be the last event in the load process, wait 200ms for any other code to finish
-window.addEventListener('load', setTimeout(function(){
+window.addEventListener('load', function(){
     phonegapdesktop.internal.initialiseData();
     
-    // Map mouse events to touch events
-    document.onmousedown = function(e){
-        phonegapdesktop.internal.dispatchTouchEvent(e, "touchstart");
-        phonegapdesktop.internal.touchActive = true;
-        phonegapdesktop.internal.dispatchTouchEvent(e, "touchmove");
-    };
+    setTimeout(function(){
     
-    document.onmousemove = function(e){
-        if (phonegapdesktop.internal.touchActive) {
+        // Map mouse events to touch events
+        document.onmousedown = function(e){
+            phonegapdesktop.internal.dispatchTouchEvent(e, "touchstart");
+            phonegapdesktop.internal.touchActive = true;
             phonegapdesktop.internal.dispatchTouchEvent(e, "touchmove");
-        }
-    };
-    
-    document.onmouseup = function(e){
-        phonegapdesktop.internal.dispatchTouchEvent(e, "touchmove");
-        phonegapdesktop.internal.touchActive = false;
-        phonegapdesktop.internal.dispatchTouchEvent(e, "touchend");
-    };
-    
-    // Map Ctrl+Alt+{Key} to fire events
-    document.onkeydown = function(e){
-        e = e || window.event;
-        if (e.altKey && e.ctrlKey) {
-            phonegapdesktop.internal.fireEvent(e.keyCode);
-        }
-    };
-    
-    document.removeEventListener("DOMContentLoaded", arguments.callee, false);
-    var readyEvent = document.createEvent('HTMLEvents');
-    readyEvent.initEvent('deviceready', true, true);
-    document.dispatchEvent(readyEvent);
-}, 200), false);
+        };
+        
+        document.onmousemove = function(e){
+            if (phonegapdesktop.internal.touchActive) {
+                phonegapdesktop.internal.dispatchTouchEvent(e, "touchmove");
+            }
+        };
+        
+        document.onmouseup = function(e){
+            phonegapdesktop.internal.dispatchTouchEvent(e, "touchmove");
+            phonegapdesktop.internal.touchActive = false;
+            phonegapdesktop.internal.dispatchTouchEvent(e, "touchend");
+        };
+        
+        // Map Ctrl+Alt+{Key} to fire events
+        document.onkeydown = function(e){
+            e = e || window.event;
+            if (e.altKey && e.ctrlKey) {
+                phonegapdesktop.internal.fireEvent(e.keyCode);
+            }
+        };
+        
+        phonegapdesktop.utility.timedPopup(25, 90, 70, 7, "PhoneGap Desktop<br/>Ctrl+Alt + H for events help", 1000, "DarkBlue");
+        
+        document.removeEventListener("DOMContentLoaded", arguments.callee, false);
+        var readyEvent = document.createEvent('HTMLEvents');
+        readyEvent.initEvent('deviceready', true, true);
+        document.dispatchEvent(readyEvent);
+    }, phonegapdesktop.internal.getDebugValue("internal", "startupDelay") || 200)
+}, false);
 
 
 // Internal library functions 
@@ -69,7 +75,7 @@ phonegapdesktop.internal = {
         data = jsonReq.responseText;
         
         
-        this.debugdata = phonegapdesktop.utility.mergeRecursive(this.debugdata, phonegapdesktop.utility.parseJSON(data));
+        phonegapdesktop.internal.debugdata = phonegapdesktop.utility.mergeRecursive(phonegapdesktop.internal.debugdata, phonegapdesktop.utility.parseJSON(data));
     },
     
     dispatchTouchEvent: function(mouseArgs, eventName){
@@ -95,11 +101,18 @@ phonegapdesktop.internal = {
         var indexPrefix = '_lastIndex_';
         var useIndex = 0;
         var node = this.debugdata[nodeName];
+        var inSequence = true;
         
         if (Object.prototype.toString.call(node[element]) === '[object Array]') {
             // Pick an element from the array
-            if (node.arraySequence || this.debugdata.internal.arraySequence) {
-                if (typeof(node[indexPrefix + element]) == 'number') {
+            if (node.arraySequence != undefined) {
+                inSequence = node.arraySequence;
+            }
+            else {
+                inSequence = phonegapdesktop.internal.debugdata.internal.arraySequence;
+            }
+            if (inSequence) {
+                if (typeof(node[indexPrefix + element]) === 'number') {
                     useIndex = node[indexPrefix + element] + 1;
                     if (useIndex >= node[element].length) {
                         useIndex = 0;
@@ -123,8 +136,18 @@ phonegapdesktop.internal = {
     fireEvent: function(keyCode){
         var customEvent = document.createEvent('HTMLEvents');
         var eventName = '';
+        var helpHTML = '<span style="font-size: 1.2em;">Firing events</span><p style="text-align:left">Phone events can be fired by using Ctrl + Alt + the keys below</p><ul style="text-align: left"><li>P - Pause the app</li>';
+        helpHTML += '<li>R - Resume the app</li><li>O - Phone has gone online</li><li>F - Phone has gone offline</li>';
+        helpHTML += '<li>B - Back button pressed</li><li>I - Battery Critical</li><li>L - Battery Low</li>';
+        helpHTML += '<li>A - Battery status change</li><li>M - Menu button pressed</li><li>S - Search button pressed</li>';
+        helpHTML += '<li>T - Start call button</li><li>E - End call button</li><li>D - Volume Down button</li>';
+        helpHTML += '<li>U - Volume up button</li></ul>';
+        
         
         switch (keyCode) {
+            case 72: // <H>elp
+                phonegapdesktop.utility.timedPopup(10, 10, 77, 78, helpHTML, 3000, "DarkBlue");
+                break;
             case 80: // <P>ause
                 eventName = 'pause';
                 break;
@@ -142,15 +165,15 @@ phonegapdesktop.internal = {
                 break;
             case 73: // Battery Cr<i>tical
                 eventName = 'batterycritical';
-                setBatteryProperties(customEvent);
+                phonegapdesktop.internal.setBatteryProperties(customEvent);
                 break;
             case 76: // Battery <L>ow
                 eventName = 'batterylow';
-                setBatteryProperties(customEvent);
+                phonegapdesktop.internal.setBatteryProperties(customEvent);
                 break;
             case 65: // B<a>ttery Status
                 eventName = 'batterystatus';
-                setBatteryProperties(customEvent);
+                phonegapdesktop.internal.setBatteryProperties(customEvent);
                 break;
             case 77: // <M>enu button
                 eventName = 'menubutton';
@@ -170,19 +193,17 @@ phonegapdesktop.internal = {
             case 85: // Volume <U>p 
                 eventName = 'volumeupbutton';
                 break;
-                
-                if (eventName != '') {
-                    customEvent.initEvent(eventName, true, true);
-                    document.dispatchEvent(readyEvent);
-                }
+        }
+        
+        if (eventName !== '') {
+            customEvent.initEvent(eventName, true, true);
+            document.dispatchEvent(customEvent);
         }
     },
     
     setBatteryProperties: function(eventObject){
         var batteryInfo = phonegapdesktop.internal.getDebugValue('events', 'battery');
-        for (var prop in batteryInfo) {
-            eventObject[prop] = batteryInfo[prop];
-        }
+        phonegapdesktop.utility.mergeRecursive(eventObject, batteryInfo);
     },
     
     
@@ -233,16 +254,31 @@ phonegapdesktop.internal = {
     
     mediaHandler: function(successCallback, errorCallback, options){
         if (phonegapdesktop.internal.randomException("capture")) {
-            CaptureError(phonegapdesktop.internal.getDebugValue('capture', 'error'));
+            errorCallback(phonegapdesktop.internal.getDebugValue('capture', 'error'));
         }
         else {
             var mediaFiles = phonegapdesktop.internal.getDebugValue('capture', 'media');
             for (var media in mediaFiles) {
                 media = new phonegapdesktop.objects.MediaFile(media);
             }
-            captureSuccess(mediaFiles);
+            successCallback(mediaFiles);
+        }
+    },
+    
+    beeper: function(times){
+        if (times > 0) {
+            phonegapdesktop.utility.timedPopup(20, 90, 60, 5, "Beep", 300, "Green", phonegapdesktop.internal.beepPause, times - 1);
+        }
+    },
+    
+    beepPause: function(times){
+        if (times > 0) {
+            setTimeout(function(){
+                phonegapdesktop.internal.beeper(times)
+            }, 300);
         }
     }
+    
 };
 
 phonegapdesktop.utility = {
@@ -253,16 +289,29 @@ phonegapdesktop.utility = {
         for (var p in obj2) {
             try {
                 // Property in destination object set; update its value.
-                if (obj2[p].constructor == Object) {
-                    obj1[p] = mergeRecursive(obj1[p], obj2[p]);
+                if (obj2[p].constructor === Object) {
+                    obj1[p] = phonegapdesktop.utility.mergeRecursive(obj1[p], obj2[p]);
                 }
                 else {
                     obj1[p] = obj2[p];
                 }
             } 
             catch (e) {
-                // Property in destination object not set; create it and set its value.
                 obj1[p] = obj2[p];
+                /*
+                 // Property in destination object not set; create it and set its value.
+                 if (obj1.__defineGetter__) {
+                 obj1.__defineGetter__(p, function(){
+                 return obj2[p]
+                 });
+                 }
+                 if (Object.defineProperty) {
+                 Object.defineProperty(obj1, p, {
+                 get: function(){
+                 return obj2[p];
+                 }
+                 });
+                 }*/
             }
         }
         
@@ -294,11 +343,66 @@ phonegapdesktop.utility = {
     
     // trim12 function copied from http://blog.stevenlevithan.com/archives/faster-trim-javascript
     trim: function(str){
-        var str = str.replace(/^\s\s*/, ''), ws = /\s/, i = str.length;
-        while (ws.test(str.charAt(--i))) 
-            ;
-        return str.slice(0, i + 1);
+        var outstr = str.replace(/^\s\s*/, ''), ws = /\s/, i = str.length;
+        while (ws.test(outstr.charAt(--i))) {
+        };
+        return outstr.slice(0, i + 1);
+    },
+    
+    timedPopup: function(left, top, width, height, content, interval, borderColor, callback, callbackParams){
+        var newDiv = document.createElement('div');
+        var styleText = "position: absolute; background-color: White; text-align: center; border-radius: 5px; font-family: 'Arial'; font-size: 0.75em; z-index: 1; padding: 4px; display: table;";
+        
+        newDiv.id = 'timedPopup';
+        newDiv.style.cssText = styleText + "left: " + left + "%; top: " + top + "%; width: " + width + "%; min-height: " + height + "%; border: solid 5px " + borderColor;
+        newDiv.innerHTML = "<span style='display: table-cell; vertical-align: middle; text-align: center;'>" + content + "</span>";
+        document.documentElement.appendChild(newDiv);
+        
+        setTimeout(function(){
+            var popupDiv = document.getElementById('timedPopup');
+            document.documentElement.removeChild(popupDiv);
+            if (callback) {
+                callback(callbackParams);
+            }
+        }, interval);
+    },
+    
+	// Copied from http://stackoverflow.com/questions/728360/copying-an-object-in-javascript
+    clone: function(obj){
+        // Handle the 3 simple types, and null or undefined
+        if (null == obj || "object" != typeof obj) 
+            return obj;
+        
+        // Handle Date
+        if (obj instanceof Date) {
+            var copy = new Date();
+            copy.setTime(obj.getTime());
+            return copy;
+        }
+        
+        // Handle Array
+        if (obj instanceof Array) {
+            var copy = [];
+            var len = obj.length;
+            for (var i = 0; i < len; ++i) {
+                copy[i] = clone(obj[i]);
+            }
+            return copy;
+        }
+        
+        // Handle Object
+        if (obj instanceof Object) {
+            var copy = {};
+            for (var attr in obj) {
+                if (obj.hasOwnProperty(attr)) 
+                    copy[attr] = phonegapdesktop.utility.clone(obj[attr]);
+            }
+            return copy;
+        }
+        
+        throw new Error("Unable to copy obj! Its type isn't supported.");
     }
+    
 };
 
 phonegapdesktop.objects = {
@@ -336,16 +440,16 @@ navigator.camera = {
             cameraError('A random error was generated');
         }
         else {
-            if (cameraOptions && cameraOptions.destinationType != undefined && cameraOptions.destinationType == Camera.DestinationType.FILE_URI) {
+            if (cameraOptions && cameraOptions.destinationType !== undefined && cameraOptions.destinationType === Camera.DestinationType.FILE_URI) {
                 cameraSuccess(phonegapdesktop.internal.getDebugValue('camera', 'pictures_url'));
             }
             else {
-				if (cameraOptions.encodingType === Camera.EncodingType.PNG) {
-					cameraSuccess(phonegapdesktop.internal.getDebugValue('camera', 'pictures_base64_png'));
-				}
-				else {
-					cameraSuccess(phonegapdesktop.internal.getDebugValue('camera', 'pictures_base64_jpg'));
-				}
+                if (cameraOptions.encodingType === Camera.EncodingType.PNG) {
+                    cameraSuccess(phonegapdesktop.internal.getDebugValue('camera', 'pictures_base64_png'));
+                }
+                else {
+                    cameraSuccess(phonegapdesktop.internal.getDebugValue('camera', 'pictures_base64_jpg'));
+                }
             }
         }
     }
@@ -393,7 +497,7 @@ phonegapdesktop.objects.MediaFile.prototype.getFormatData = function(successCall
     else {
         successCallback(phonegapdesktop.internal.getDebugValue('capture', 'mediaformat'));
     }
-}
+};
 
 var CaptureError = {};
 CaptureError.CAPTURE_INTERNAL_ERR = 0;
@@ -427,9 +531,11 @@ navigator.compass = {
 
 var CompassError = {};
 CompassError.COMPASS_INTERNAL_ERR = 0;
-CompassError.COMPASS_NOT_SUPPORTED = 20
+CompassError.COMPASS_NOT_SUPPORTED = 20;
 
-navigator.network = { connection: {}};
+navigator.network = {
+    connection: {}
+};
 phonegapdesktop.internal.setDynamicProperty(navigator.network.connection, "connection", "type");
 
 var Connection = {};
@@ -444,8 +550,8 @@ Connection.NONE = "none";
 navigator.contacts = {
     create: function(properties){
         var tempContact = new Contact();
-        mergeRecursive(tempContact, properties);
-        return new tempContact;
+        phonegapdesktop.utility.mergeRecursive(tempContact, properties);
+        return tempContact;
     },
     find: function(contactFields, contactSuccess, contactError, contactFindOptions){
         if (phonegapdesktop.internal.randomException("contacts")) {
@@ -475,13 +581,21 @@ function Contact(id, displayName, name, nickname, phoneNumbers, emails, addresse
     this.urls = urls;
     
     var that = this;
+    
+    this.clone = function(){
+        return phonegapdesktop.utility.clone(that);
+    };
+    
+    this.save = function(saveSuccess, saveError){
+        if (phonegapdesktop.internal.randomException("contacts")) {
+            saveError(phonegapdesktop.internal.getDebugValue("contacts", "error"));
+        }
+        else {
+            saveSuccess(that);
+        }
+    };
 }
 
-Contact.prototype.clone = function(){
-    var cloneContact = new Contact();
-    phonegapdesktop.utility.mergeRecursive(cloneContact, that);
-    return cloneContact;
-};
 Contact.prototype.remove = function(removeSuccess, removeError){
     if (phonegapdesktop.internal.randomException("contacts")) {
         removeError(phonegapdesktop.internal.getDebugValue("contacts", "error"));
@@ -491,15 +605,6 @@ Contact.prototype.remove = function(removeSuccess, removeError){
     }
     
 };
-Contact.prototype.save = function(saveSuccess, saveError){
-    if (phonegapdesktop.internal.randomException("contacts")) {
-        saveError(phonegapdesktop.internal.getDebugValue("contacts", "error"));
-    }
-    else {
-        saveSuccess(that);
-    }
-};
-
 
 function ContactName(formatted, familyName, givenName, middleName, prefix, suffix){
     this.formatted = formatted;
@@ -561,6 +666,7 @@ phonegapdesktop.internal.setDynamicProperty(window.device, "device", "version");
 // Geolocation object may already be defined by the browser, need to make sure we can override the functions if so
 navigator.geolocation = navigator.geolocation || {};
 
+// NOTE This only works occaisionally in Firefox
 navigator.geolocation.getCurrentPosition = function(geolocationSuccess, geolocationError, geolocationOptions){
     if (phonegapdesktop.internal.randomException("geolocation")) {
         geolocationError(phonegapdesktop.internal.getDebugValue("geolocation", "error"));
@@ -591,6 +697,51 @@ function Media(src, mediaSuccess, mediaError, mediaStatus){
     this.SuccessCallback = mediaSuccess;
     this.ErrorCallback = mediaError;
     this.StatusCallback = mediaStatus;
+    
+    var that = this;
+    
+    this.play = function(){
+        if (phonegapdesktop.internal.randomException("media")) {
+            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
+        }
+        else {
+            that.SuccessCallback();
+        }
+    };
+    this.pause = function(){
+        if (phonegapdesktop.internal.randomException("media")) {
+            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
+        }
+        else {
+            that.SuccessCallback();
+        }
+    };
+    
+    this.startRecord = function(){
+        if (phonegapdesktop.internal.randomException("media")) {
+            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
+        }
+        else {
+            that.SuccessCallback();
+        }
+        
+    };
+    this.stopRecord = function(){
+        if (phonegapdesktop.internal.randomException("media")) {
+            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
+        }
+        else {
+            that.SuccessCallback();
+        }
+    };
+    this.stop = function(){
+        if (phonegapdesktop.internal.randomException("media")) {
+            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
+        }
+        else {
+            that.SuccessCallback();
+        }
+    };
 }
 
 Media.prototype.getCurrentPosition = function(mediaSuccess, mediaError){
@@ -606,51 +757,11 @@ Media.prototype.getDuration = function(){
     return phonegapdesktop.internal.getDebugValue("media", "duration");
 };
 
-Media.prototype.play = function(){
-    if (phonegapdesktop.internal.randomException("media")) {
-        that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
-    }
-    else {
-        that.SuccessCallback();
-    }
-};
-Media.prototype.pause = function(){
-    if (phonegapdesktop.internal.randomException("media")) {
-        that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
-    }
-    else {
-        that.SuccessCallback();
-    }
-};
 Media.prototype.release = function(){
 };
 Media.prototype.seekTo = function(milliSeconds){
 };
-Media.prototype.startRecord = function(){
-    if (phonegapdesktop.internal.randomException("media")) {
-        that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
-    }
-    else {
-        that.SuccessCallback();
-    }
-    
-};
-Media.prototype.stopRecord = function(){
-    if (phonegapdesktop.internal.randomException("media")) {
-        that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
-    }
-    else {
-        that.SuccessCallback();
-    }
-};
-Media.prototype.stop = function(){
-    if (phonegapdesktop.internal.randomException("media")) {
-        that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
-    }
-    else {
-        that.SuccessCallback();
-    }
-};
+
 
 var MediaError = {};
 MediaError.MEDIA_ERR_NONE_ACTIVE = 0;
@@ -671,10 +782,10 @@ navigator.notification = {
         confirmCallback((isConfirmed) ? 1 : 2);
     },
     beep: function(times){
-        // TODO add display of beep
+        phonegapdesktop.internal.beeper(times);
     },
     vibrate: function(milliseconds){
-        // TODO add display of vibrate
+        phonegapdesktop.utility.timedPopup(20, 90, 60, 5, "Vibrate", milliseconds, "Orange");
     }
 };
 

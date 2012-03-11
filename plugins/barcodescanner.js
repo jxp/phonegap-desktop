@@ -6,7 +6,7 @@ if (!window.plugins){
 
 window.plugins.barcodeScanner = {
 	scan: function(successCallback, errorCallback){
-		if (phonegapdesktop.internal.randomException("barcodeScanner")) {
+		if (phonegapdesktop.internal.randomException("barcodescanner")) {
 			errorCallback('A random error was generated');
 		}
 		else {
