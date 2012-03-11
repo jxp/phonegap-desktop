@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+
+        <title>PhoneGap Kitchen Sink - Camera</title>
+
+        <link rel="stylesheet" href="style/jquery.mobile-1.0rc1.min.css" />
+
+        <script type="text/javascript" src="js/jquery-1.6.4.min.js"></script>
+        <script type="text/javascript" src="phonegap.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.0rc1.min.js"></script>
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    </head>
+    <body>
+        <div data-role="page" id="camera">
+
+            <div data-role="header">
+                <a href="#" data-rel="back" data-icon="arrow-l">Back</a>
+                <h1>Camera</h1>
+            </div>
+
+            <div data-role="content">
+                <fieldset class="ui-grid-a">
+                    <div class="ui-block-a"><button type="button" data-theme="c" data-icon="plus">Camera</button></div>
+                    <div class="ui-block-b"><button type="button" data-theme="c" data-icon="search">Gallery</button></div>
+                </fieldset>
+
+                <div id="camera-image" class="ui-body ui-body-b" style="background-size:100%;min-height:250px"></div>
+            </div>
+
+            <script type="text/javascript" src="../js/api/camera.js"></script>
+
+        </div>
+    </body>
+</html>
