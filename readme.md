@@ -12,13 +12,13 @@ See the Wiki for some notes on getting started.
 
 Current Status:
 
-Implemented code for all API methods
-Tested in IE, Firefox and Chrome
+Implemented code for all API methods  
+Tested in IE, Firefox and Chrome  
+Created wiki pages for the library 
 
 
 Next Steps:
 
-Provide documentation on how to use
-Complete full testing
-Investigate overriding Firefox geolocation
-Look at possibility of using new getUserMedia method
+Complete full testing  
+Investigate overriding Firefox geolocation  
+Look at possibility of using new getUserMedia method  (beta builds of Opera and Chrome)
