@@ -732,13 +732,20 @@ MediaError.MEDIA_ERR_NONE_SUPPORTED = 4;
 
 
 navigator.notification = {
+
     alert: function(message, alertCallback, title, buttonName){
         alert(message);
-        alertCallback();
+        if (alertCallback)
+        {
+            alertCallback();
+        }
     },
     confirm: function(message, confirmCallback, title, buttonLabels){
         var isConfirmed = confirm(message);
-        confirmCallback((isConfirmed) ? 1 : 2);
+        if (confirmCallback)
+        {
+            confirmCallback((isConfirmed) ? 1 : 2);
+        }
     },
     beep: function(times){
         phonegapdesktop.internal.beeper(times);
