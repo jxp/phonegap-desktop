@@ -75,7 +75,7 @@ phonegapdesktop.internal = {
         data = jsonReq.responseText;
         
         
-        phonegapdesktop.internal.debugdata = phonegapdesktop.utility.mergeRecursive(phonegapdesktop.internal.debugdata, phonegapdesktop.utility.parseJSON(data));
+        phonegapdesktop.internal.debugdata = phonegapdesktop.utility.mergeRecursive(phonegapdesktop.internal.debugdata, JSON.parse(data));
     },
     
     dispatchTouchEvent: function(mouseArgs, eventName){
@@ -298,57 +298,12 @@ phonegapdesktop.utility = {
             } 
             catch (e) {
                 obj1[p] = obj2[p];
-                /*
-                 // Property in destination object not set; create it and set its value.
-                 if (obj1.__defineGetter__) {
-                 obj1.__defineGetter__(p, function(){
-                 return obj2[p]
-                 });
-                 }
-                 if (Object.defineProperty) {
-                 Object.defineProperty(obj1, p, {
-                 get: function(){
-                 return obj2[p];
-                 }
-                 });
-                 }*/
             }
         }
         
         return obj1;
     },
-    
-    
-    // parseJSON function copied from http://stackoverflow.com/questions/3238457/getjson-without-jquery
-    parseJSON: function(data){
-        if (typeof data !== "string" || !data) {
-            return null;
-        }
         
-        // Make sure leading/trailing whitespace is removed (IE can't handle it) 
-        data = this.trim(data);
-        
-        // Make sure the incoming data is actual JSON 
-        // Logic borrowed from http://json.org/json2.js 
-        if (/^[\],:{}\s]*$/.test(data.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g, ""))) {
-        
-            // Try to use the native JSON parser first 
-            return window.JSON && window.JSON.parse ? window.JSON.parse(data) : (new Function("return " + data))();
-            
-        }
-        else {
-            throw "Invalid JSON: " + data;
-        }
-    },
-    
-    // trim12 function copied from http://blog.stevenlevithan.com/archives/faster-trim-javascript
-    trim: function(str){
-        var outstr = str.replace(/^\s\s*/, ''), ws = /\s/, i = str.length;
-        while (ws.test(outstr.charAt(--i))) {
-        };
-        return outstr.slice(0, i + 1);
-    },
-    
     timedPopup: function(left, top, width, height, content, interval, borderColor, callback, callbackParams){
         var newDiv = document.createElement('div');
         var styleText = "position: absolute; background-color: White; text-align: center; border-radius: 5px; font-family: 'Arial'; font-size: 0.75em; z-index: 1; padding: 4px; display: table;";
@@ -697,7 +652,8 @@ function Media(src, mediaSuccess, mediaError, mediaStatus){
     this.SuccessCallback = mediaSuccess;
     this.ErrorCallback = mediaError;
     this.StatusCallback = mediaStatus;
-    
+    var audioObj = new Audio(src);
+	audioObj.load();
     var that = this;
     
     this.play = function(){
@@ -705,6 +661,7 @@ function Media(src, mediaSuccess, mediaError, mediaStatus){
             that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
         }
         else {
+			audioObj.play();
             that.SuccessCallback();
         }
     };
@@ -713,6 +670,7 @@ function Media(src, mediaSuccess, mediaError, mediaStatus){
             that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
         }
         else {
+			audioObj.pause();
             that.SuccessCallback();
         }
     };
@@ -739,6 +697,7 @@ function Media(src, mediaSuccess, mediaError, mediaStatus){
             that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
         }
         else {
+			audioObj.pause();
             that.SuccessCallback();
         }
     };
