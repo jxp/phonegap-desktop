@@ -656,12 +656,32 @@ function Media(src, mediaSuccess, mediaError, mediaStatus){
 	audioObj.load();
     var that = this;
     
+	var supportedFile = function() {
+		var mimeTypes = {
+			".ogg" : 'audio/ogg; codecs="vorbis"',
+			".wav" : 'audio/wav',
+			".mp3" : 'audio/mpeg',
+			".m4a" : 'audio/mp4',
+			".aac" : 'audio/mp4; codecs="mp4a.40.5"'
+		}
+		
+		var fileType = src.substr(src.lastIndexOf('.')) || src;
+		
+		return (mimeTypes[fileType] && audioObj.canPlayType(mimeTypes[fileType]));
+	};
+	
+	
     this.play = function(){
         if (phonegapdesktop.internal.randomException("media")) {
             that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
         }
         else {
-			audioObj.play();
+			if (supportedFile()) {
+				audioObj.play();
+			}
+			else {
+		        phonegapdesktop.utility.timedPopup(35, 90, 60, 5, "Unsupported audio: " + (src.substr(src.lastIndexOf('.')) || src), 1000, "DarkBlue");
+			}
             that.SuccessCallback();
         }
     };
