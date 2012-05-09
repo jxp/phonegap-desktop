@@ -208,7 +208,11 @@ phonegapdesktop.internal = {
     
     
     randomException: function(sectionName){
-        if (sectionName && this.debugdata[sectionName].exceptionThreshold) {
+    	/*
+    	* A little improvement: check if the provided sectionName exists into debugdata.
+    	* Because in Firefox (sometimes) this this.debugdata[sectionName] is undefined.
+    	*/
+        if (sectionName && this.debugdata[sectionName] && this.debugdata[sectionName].exceptionThreshold) {
             return (Math.random() < this.debugdata[sectionName].exceptionThreshold);
         }
         
