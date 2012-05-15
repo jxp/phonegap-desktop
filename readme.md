@@ -19,7 +19,7 @@ Created wiki pages for the library
 
 Next Steps:
 
-Look at using new getUserMedia method for camera capture (latest release of Chrome)
-Add Cordova File API methods
-Investigate other keyboard shortcuts (current ones don't work in Firefox)
+Look at using new getUserMedia method for camera capture (latest release of Chrome)  
+Add Cordova File API methods  
+Investigate other keyboard shortcuts (current ones don't work in Firefox)  
 Investigate overriding Firefox geolocation  
