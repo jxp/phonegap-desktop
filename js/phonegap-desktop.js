@@ -136,6 +136,7 @@ phonegapdesktop.internal = {
     fireEvent: function(keyCode){
         var customEvent = document.createEvent('HTMLEvents');
         var eventName = '';
+        var windowEvent = false;
         var helpHTML = '<span style="font-size: 1.2em;">Firing events</span><p style="text-align:left">Phone events can be fired by using Ctrl + Alt + the keys below</p><ul style="text-align: left"><li>P - Pause the app</li>';
         helpHTML += '<li>R - Resume the app</li><li>O - Phone has gone online</li><li>F - Phone has gone offline</li>';
         helpHTML += '<li>B - Back button pressed</li><li>I - Battery Critical</li><li>L - Battery Low</li>';
@@ -166,14 +167,17 @@ phonegapdesktop.internal = {
             case 73: // Battery Cr<i>tical
                 eventName = 'batterycritical';
                 phonegapdesktop.internal.setBatteryProperties(customEvent);
+                windowEvent = true;
                 break;
             case 76: // Battery <L>ow
                 eventName = 'batterylow';
                 phonegapdesktop.internal.setBatteryProperties(customEvent);
+                windowEvent = true;
                 break;
             case 65: // B<a>ttery Status
                 eventName = 'batterystatus';
                 phonegapdesktop.internal.setBatteryProperties(customEvent);
+                windowEvent = true;
                 break;
             case 77: // <M>enu button
                 eventName = 'menubutton';
@@ -197,7 +201,12 @@ phonegapdesktop.internal = {
         
         if (eventName !== '') {
             customEvent.initEvent(eventName, true, true);
-            document.dispatchEvent(customEvent);
+            if (windowEvent) {
+            	window.dispatchEvent(customEvent);	
+            }
+            else {
+            	document.dispatchEvent(customEvent);
+            }
         }
     },
     
