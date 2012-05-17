@@ -11,7 +11,6 @@ window.addEventListener('load', function(){
         document.onmousedown = function(e){
             phonegapdesktop.internal.dispatchTouchEvent(e, "touchstart");
             phonegapdesktop.internal.touchActive = true;
-            phonegapdesktop.internal.dispatchTouchEvent(e, "touchmove");
         };
         
         document.onmousemove = function(e){
@@ -21,7 +20,6 @@ window.addEventListener('load', function(){
         };
         
         document.onmouseup = function(e){
-            phonegapdesktop.internal.dispatchTouchEvent(e, "touchmove");
             phonegapdesktop.internal.touchActive = false;
             phonegapdesktop.internal.dispatchTouchEvent(e, "touchend");
         };
@@ -666,6 +664,7 @@ function Media(src, mediaSuccess, mediaError, mediaStatus){
     this.ErrorCallback = mediaError;
     this.StatusCallback = mediaStatus;
     var audioObj = new Audio(src);
+    audioObj.addEventListener("ended", this.SuccessCallback);
 	audioObj.load();
     var that = this;
     
@@ -695,7 +694,6 @@ function Media(src, mediaSuccess, mediaError, mediaStatus){
 			else {
 		        phonegapdesktop.utility.timedPopup(35, 90, 60, 5, "Unsupported audio: " + (src.substr(src.lastIndexOf('.')) || src), 1000, "DarkBlue");
 			}
-            that.SuccessCallback();
         }
     };
     this.pause = function(){
@@ -809,4 +807,130 @@ navigator.app = {
     }
 };
 
+window.BlobBuilder  = window.BlobBuilder || window.WebKitBlobBuilder;
 
+var LocalFileSystem = {TEMPORARY: window.TEMPORARY || 0, PERSISTENT: window.PERSISTENT || 1};
+
+window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+
+window.resolveLocalFileSystemURI = function(uri, success, error){
+	this.uri = uri;
+	this.success = success;
+	this.error = error;
+	var fsRoot = (
+		resolveLocalFileSystemURI.prototype.permFS && resolveLocalFileSystemURI.prototype.permFS.root && uri.indexOf(resolveLocalFileSystemURI.prototype.permFS.root.toURL()) == 0
+		? resolveLocalFileSystemURI.prototype.permFS.root
+		: (
+			resolveLocalFileSystemURI.prototype.tempFS && resolveLocalFileSystemURI.prototype.tempFS.root && uri.indexOf(resolveLocalFileSystemURI.prototype.tempFS.root.toURL()) == 0
+			? resolveLocalFileSystemURI.prototype.tempFS.root
+			: false
+		)
+	);
+	if (fsRoot) {
+		var path = uri.substr(fsRoot.toURL().length);
+		fsRoot.getFile(path, {create: true}, success, error);
+	} else {
+		error({code: FileError.NOT_FOUND_ERR});
+	}
+}
+requestFileSystem(LocalFileSystem.TEMPORARY, 1, function(fs){resolveLocalFileSystemURI.prototype.tempFS = fs;});
+requestFileSystem(LocalFileSystem.PERSISTENT, 1, function(fs){resolveLocalFileSystemURI.prototype.permFS = fs;});
+
+function FileTransfer(){}
+
+FileTransfer.prototype.download = function(source, target, success, error){
+	var that = this;
+	this.source = source;
+	this.target = target;
+	this.success = success;
+	this.error = error;
+	window.resolveLocalFileSystemURI(
+		target,
+		function(fileEntry) {
+			fileEntry.createWriter(
+				function(fileWriter) {
+					fileWriter.onerror = error;
+					that.ajax({
+						url: source,
+						dataType: "binary",
+						converters: {
+							"text binary": function(b){return b;}
+						},
+						beforeSend: function(jqXHR, settings){
+							jqXHR.overrideMimeType("text/plain; charset=x-user-defined");
+						},
+						success: function(data, textStatus, jqXHR){
+							fileWriter.onwriteend = function(e) {
+								fileWriter.onwriteend = function(e) {
+									success(fileEntry);
+								};
+								var bb = new BlobBuilder();
+								var byteArray = new Uint8Array(data.length);
+								for ( var i = 0; i < data.length; i++) {
+									byteArray[i] = data.charCodeAt(i) & 0xff;
+								}
+								bb.append(byteArray.buffer);
+								fileWriter.write(bb.getBlob("application/octet-stream"));
+							};
+							fileWriter.truncate(0);
+						},
+						error: function(jqXHR, textStatus, errorThrown){
+							fileEntry.remove(function(){});
+							error(errorThrown);
+						}
+					});
+				},
+				error
+			);
+		},
+		error
+	);
+};
+
+FileTransfer.prototype.ajax = function(options){
+	var ajaxRequest;
+
+	try {
+		// Opera 8.0+, Firefox, Safari
+		ajaxRequest = new XMLHttpRequest();
+	} catch(e) {
+		// Internet Explorer Browsers
+		try {
+			ajaxRequest = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch(e) {
+			try {
+				ajaxRequest = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch(e){
+				// Something went wrong
+				alert("Your browser doesn't support AJAX!");
+				return false;
+			}
+		}
+	}
+
+	// Create a function that will receive data sent from the server
+	ajaxRequest.onreadystatechange = function(){
+		var success = false;
+		var error = null;
+		if (ajaxRequest.readyState == 4) {
+			if (ajaxRequest.status == 200 && options.success) {
+				try {
+					var response = ajaxRequest.responseText;
+					options.success(response, ajaxRequest.statusText, ajaxRequest);
+					success = true;
+				} catch (e) {
+					error = e;
+				}
+			}
+			if (!success && options.error) {
+				options.error(ajaxRequest, ajaxRequest.statusText, error);
+			}
+		}
+	}
+
+	// This trick is needed to be able to download binary files
+	ajaxRequest.overrideMimeType("text/plain; charset=x-user-defined");
+
+	ajaxRequest.open("GET", options.url, true);
+	ajaxRequest.send(null); 
+};
