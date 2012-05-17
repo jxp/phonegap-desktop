@@ -12,14 +12,14 @@ See the Wiki for some notes on getting started.
 
 Current Status:
 
-Implemented code for all API methods  
-Tested in IE, Firefox and Chrome  
-Created wiki pages for the library 
+Merged changes from flocsy and diegolamonica
+Added warning message if JSON data cannot be loaded
+Added section headings and links to API docs
+Firefox keyboard issue was caused by My Homepage extension
 
 
 Next Steps:
 
-Look at using new getUserMedia method for camera capture (latest release of Chrome)  
 Add Cordova File API methods  
-Investigate other keyboard shortcuts (current ones don't work in Firefox)  
+Look at using new getUserMedia method for camera capture (latest release of Chrome)  
 Investigate overriding Firefox geolocation  
