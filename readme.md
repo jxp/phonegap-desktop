@@ -12,14 +12,14 @@ See the Wiki for some notes on getting started.
 
 Current Status:
 
-Merged changes from flocsy and diegolamonica
-Added warning message if JSON data cannot be loaded
-Added section headings and links to API docs
-Firefox keyboard issue was caused by My Homepage extension
+Merged changes from flocsy and diegolamonica  
+Added warning message if JSON data cannot be loaded  
+Added section headings and links to API docs  
+Firefox keyboard issue was caused by My Homepage extension  
 
 
 Next Steps:
 
 Add Cordova File API methods  
-Look at using new getUserMedia method for camera capture (latest release of Chrome)  
+Look at using new getUserMedia method for camera capture (latest release of Chrome, Opera beta)  
 Investigate overriding Firefox geolocation  
