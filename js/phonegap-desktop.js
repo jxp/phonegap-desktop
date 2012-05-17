@@ -387,7 +387,12 @@ phonegapdesktop.objects = {
 // End of PhoneGap desktop internal methods and properties
 
 
+// ************************************
 // Start of PhoneGap API stub functions
+// ************************************
+
+
+//  Accelerometer API - http://docs.phonegap.com/en/1.7.0/cordova_accelerometer_accelerometer.md.html
 navigator.accelerometer = {
     getCurrentAcceleration: function(accelerometerSuccess, accelerometerError){
         if (phonegapdesktop.internal.randomException("accelerometer")) {
@@ -405,6 +410,8 @@ navigator.accelerometer = {
     }
 };
 
+
+// Camera API - http://docs.phonegap.com/en/1.7.0/cordova_camera_camera.md.html
 navigator.camera = {
     getPicture: function(cameraSuccess, cameraError, cameraOptions){
         if (phonegapdesktop.internal.randomException("camera")) {
@@ -449,6 +456,8 @@ var Camera = {
     }
 };
 
+
+// Capture API - http://docs.phonegap.com/en/1.7.0/cordova_media_capture_capture.md.html
 navigator.device = {};
 navigator.device.capture = {
     captureAudio: function(captureSuccess, captureError, options){
@@ -477,6 +486,8 @@ CaptureError.CAPTURE_INVALID_ARGUMENT = 2;
 CaptureError.CAPTURE_NO_MEDIA_FILES = 3;
 CaptureError.CAPTURE_NOT_SUPPORTED = 20;
 
+
+// Compass API - http://docs.phonegap.com/en/1.7.0/cordova_compass_compass.md.html
 navigator.compass = {
     getCurrentHeading: function(compassSuccess, compassError, compassOptions){
         if (phonegapdesktop.internal.randomException("compass")) {
@@ -504,6 +515,8 @@ var CompassError = {};
 CompassError.COMPASS_INTERNAL_ERR = 0;
 CompassError.COMPASS_NOT_SUPPORTED = 20;
 
+
+// Connection API - http://docs.phonegap.com/en/1.7.0/cordova_connection_connection.md.html
 navigator.network = {
     connection: {}
 };
@@ -518,6 +531,8 @@ Connection.CELL_3G = "3g";
 Connection.CELL_4G = "4g";
 Connection.NONE = "none";
 
+
+// Contacts API - http://docs.phonegap.com/en/1.7.0/cordova_contacts_contacts.md.html
 navigator.contacts = {
     create: function(properties){
         var tempContact = new Contact();
@@ -625,6 +640,8 @@ ContactError.IO_ERROR = 4;
 ContactError.NOT_SUPPORTED_ERROR = 5;
 ContactError.PERMISSION_DENIED_ERROR = 20;
 
+
+// Device API - http://docs.phonegap.com/en/1.7.0/cordova_device_device.md.html
 window.device = {};
 phonegapdesktop.internal.setDynamicProperty(window.device, "device", "name");
 phonegapdesktop.internal.setDynamicProperty(window.device, "device", "phonegap");
@@ -633,193 +650,14 @@ phonegapdesktop.internal.setDynamicProperty(window.device, "device", "uuid");
 phonegapdesktop.internal.setDynamicProperty(window.device, "device", "version");
 
 
-// NOTE: FileAPI should be supported by browsers 
-
-
-
-// Geolocation object may already be defined by the browser, need to make sure we can override the functions if so
-navigator.geolocation = navigator.geolocation || {};
-
-// NOTE This only works occaisionally in Firefox
-navigator.geolocation.getCurrentPosition = function(geolocationSuccess, geolocationError, geolocationOptions){
-    if (phonegapdesktop.internal.randomException("geolocation")) {
-        geolocationError(phonegapdesktop.internal.getDebugValue("geolocation", "error"));
-    }
-    else {
-        geolocationSuccess(phonegapdesktop.internal.getDebugValue("geolocation", "position"));
-    }
-};
-
-navigator.geolocation.watchPosition = function(geolocationSuccess, geolocationError, geolocationOptions){
-    return phonegapdesktop.internal.intervalFunction(geolocationSuccess, geolocationError, geolocationOptions.frequency, "geolocation", "position", "error");
-};
-
-navigator.geolocation.clearWatch = function(watchID){
-    phonegapdesktop.internal.cancelIntervalFunction(watchID);
-};
-
-
-var PositionError = {};
-PositionError.PERMISSION_DENIED = 1;
-PositionError.POSITION_UNAVAILABLE = 2;
-PositionError.TIMEOUT = 3;
-
-
-
-function Media(src, mediaSuccess, mediaError, mediaStatus){
-    this.Source = src;
-    this.SuccessCallback = mediaSuccess;
-    this.ErrorCallback = mediaError;
-    this.StatusCallback = mediaStatus;
-    var audioObj = new Audio(src);
-    audioObj.addEventListener("ended", this.SuccessCallback);
-	audioObj.load();
-    var that = this;
-    
-	var supportedFile = function() {
-		var mimeTypes = {
-			".ogg" : 'audio/ogg; codecs="vorbis"',
-			".wav" : 'audio/wav',
-			".mp3" : 'audio/mpeg',
-			".m4a" : 'audio/mp4',
-			".aac" : 'audio/mp4; codecs="mp4a.40.5"'
-		}
-		
-		var fileType = src.substr(src.lastIndexOf('.')) || src;
-		
-		return (mimeTypes[fileType] && audioObj.canPlayType(mimeTypes[fileType]));
-	};
-	
-	
-    this.play = function(){
-        if (phonegapdesktop.internal.randomException("media")) {
-            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
-        }
-        else {
-			if (supportedFile()) {
-				audioObj.play();
-			}
-			else {
-		        phonegapdesktop.utility.timedPopup(35, 90, 60, 5, "Unsupported audio: " + (src.substr(src.lastIndexOf('.')) || src), 1000, "DarkBlue");
-			}
-        }
-    };
-    this.pause = function(){
-        if (phonegapdesktop.internal.randomException("media")) {
-            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
-        }
-        else {
-			audioObj.pause();
-            that.SuccessCallback();
-        }
-    };
-    
-    this.startRecord = function(){
-        if (phonegapdesktop.internal.randomException("media")) {
-            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
-        }
-        else {
-            that.SuccessCallback();
-        }
-        
-    };
-    this.stopRecord = function(){
-        if (phonegapdesktop.internal.randomException("media")) {
-            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
-        }
-        else {
-            that.SuccessCallback();
-        }
-    };
-    this.stop = function(){
-        if (phonegapdesktop.internal.randomException("media")) {
-            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
-        }
-        else {
-			audioObj.pause();
-            that.SuccessCallback();
-        }
-    };
-}
-
-Media.prototype.getCurrentPosition = function(mediaSuccess, mediaError){
-    if (phonegapdesktop.internal.randomException("media")) {
-        mediaError(phonegapdesktop.internal.getDebugValue("media", "error"));
-    }
-    else {
-        mediaSuccess(phonegapdesktop.internal.getDebugValue("media", "position"));
-    }
-};
-
-Media.prototype.getDuration = function(){
-    return phonegapdesktop.internal.getDebugValue("media", "duration");
-};
-
-Media.prototype.release = function(){
-};
-Media.prototype.seekTo = function(milliSeconds){
-};
-
-
-var MediaError = {};
-MediaError.MEDIA_ERR_NONE_ACTIVE = 0;
-MediaError.MEDIA_ERR_ABORTED = 1;
-MediaError.MEDIA_ERR_NETWORK = 2;
-MediaError.MEDIA_ERR_DECODE = 3;
-MediaError.MEDIA_ERR_NONE_SUPPORTED = 4;
-
-
-
-navigator.notification = {
-
-    alert: function(message, alertCallback, title, buttonName){
-        alert(message);
-        if (alertCallback)
-        {
-            alertCallback();
-        }
-    },
-    confirm: function(message, confirmCallback, title, buttonLabels){
-        var isConfirmed = confirm(message);
-        if (confirmCallback)
-        {
-            confirmCallback((isConfirmed) ? 1 : 2);
-        }
-    },
-    beep: function(times){
-        phonegapdesktop.internal.beeper(times);
-    },
-    vibrate: function(milliseconds){
-        phonegapdesktop.utility.timedPopup(20, 90, 60, 5, "Vibrate", milliseconds, "Orange");
-    }
-};
-
-// NOTE: Storage functions should be provided by the browser
-
-// This is not documented in the API for some reason
-navigator.app = {
-    loadUrl: function(url, props){
-    },
-    
-    cancelLoadUrl: function(){
-    },
-    
-    clearHistory: function(){
-    },
-    
-    backHistory: function(){
-    },
-    
-    exitApp: function(){
-        window.close();
-    }
-};
-
-
-
+// File API - http://docs.phonegap.com/en/1.7.0/cordova_file_file.md.html 
+// Code provided by flocsy (https://github.com/flocsy) to be reviewed and completed
 window.BlobBuilder  = window.BlobBuilder || window.WebKitBlobBuilder;
 
-var LocalFileSystem = {TEMPORARY: window.TEMPORARY || 0, PERSISTENT: window.PERSISTENT || 1};
+var LocalFileSystem = {
+	TEMPORARY: window.TEMPORARY || 0, 
+	PERSISTENT: window.PERSISTENT || 1
+};
 
 window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
 
@@ -943,4 +781,188 @@ FileTransfer.prototype.ajax = function(options){
 
 	ajaxRequest.open("GET", options.url, true);
 	ajaxRequest.send(null); 
+};
+
+
+// Geolocation API - http://docs.phonegap.com/en/1.7.0/cordova_geolocation_geolocation.md.html
+// Geolocation object may already be defined by the browser, need to make sure we can override the functions if so
+navigator.geolocation = navigator.geolocation || {};
+
+// NOTE This only works occaisionally in Firefox
+navigator.geolocation.getCurrentPosition = function(geolocationSuccess, geolocationError, geolocationOptions){
+    if (phonegapdesktop.internal.randomException("geolocation")) {
+        geolocationError(phonegapdesktop.internal.getDebugValue("geolocation", "error"));
+    }
+    else {
+        geolocationSuccess(phonegapdesktop.internal.getDebugValue("geolocation", "position"));
+    }
+};
+
+navigator.geolocation.watchPosition = function(geolocationSuccess, geolocationError, geolocationOptions){
+    return phonegapdesktop.internal.intervalFunction(geolocationSuccess, geolocationError, geolocationOptions.frequency, "geolocation", "position", "error");
+};
+
+navigator.geolocation.clearWatch = function(watchID){
+    phonegapdesktop.internal.cancelIntervalFunction(watchID);
+};
+
+
+var PositionError = {};
+PositionError.PERMISSION_DENIED = 1;
+PositionError.POSITION_UNAVAILABLE = 2;
+PositionError.TIMEOUT = 3;
+
+
+// Media API - http://docs.phonegap.com/en/1.7.0/cordova_media_media.md.html
+function Media(src, mediaSuccess, mediaError, mediaStatus){
+    this.Source = src;
+    this.SuccessCallback = mediaSuccess;
+    this.ErrorCallback = mediaError;
+    this.StatusCallback = mediaStatus;
+    var audioObj = new Audio(src);
+    audioObj.addEventListener("ended", this.SuccessCallback);
+	audioObj.load();
+    var that = this;
+    
+	var supportedFile = function() {
+		var mimeTypes = {
+			".ogg" : 'audio/ogg; codecs="vorbis"',
+			".wav" : 'audio/wav',
+			".mp3" : 'audio/mpeg',
+			".m4a" : 'audio/mp4',
+			".aac" : 'audio/mp4; codecs="mp4a.40.5"'
+		}
+		
+		var fileType = src.substr(src.lastIndexOf('.')) || src;
+		
+		return (mimeTypes[fileType] && audioObj.canPlayType(mimeTypes[fileType]));
+	};
+	
+	
+    this.play = function(){
+        if (phonegapdesktop.internal.randomException("media")) {
+            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
+        }
+        else {
+			if (supportedFile()) {
+				audioObj.play();
+			}
+			else {
+		        phonegapdesktop.utility.timedPopup(35, 90, 60, 5, "Unsupported audio: " + (src.substr(src.lastIndexOf('.')) || src), 1000, "DarkBlue");
+			}
+        }
+    };
+    this.pause = function(){
+        if (phonegapdesktop.internal.randomException("media")) {
+            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
+        }
+        else {
+			audioObj.pause();
+            that.SuccessCallback();
+        }
+    };
+    
+    this.startRecord = function(){
+        if (phonegapdesktop.internal.randomException("media")) {
+            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
+        }
+        else {
+            that.SuccessCallback();
+        }
+        
+    };
+    this.stopRecord = function(){
+        if (phonegapdesktop.internal.randomException("media")) {
+            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
+        }
+        else {
+            that.SuccessCallback();
+        }
+    };
+    this.stop = function(){
+        if (phonegapdesktop.internal.randomException("media")) {
+            that.ErrorCallback(phonegapdesktop.internal.getDebugValue("media", "error"));
+        }
+        else {
+			audioObj.pause();
+            that.SuccessCallback();
+        }
+    };
+}
+
+Media.prototype.getCurrentPosition = function(mediaSuccess, mediaError){
+    if (phonegapdesktop.internal.randomException("media")) {
+        mediaError(phonegapdesktop.internal.getDebugValue("media", "error"));
+    }
+    else {
+        mediaSuccess(phonegapdesktop.internal.getDebugValue("media", "position"));
+    }
+};
+
+Media.prototype.getDuration = function(){
+    return phonegapdesktop.internal.getDebugValue("media", "duration");
+};
+
+Media.prototype.release = function(){
+};
+Media.prototype.seekTo = function(milliSeconds){
+};
+
+
+var MediaError = {};
+MediaError.MEDIA_ERR_NONE_ACTIVE = 0;
+MediaError.MEDIA_ERR_ABORTED = 1;
+MediaError.MEDIA_ERR_NETWORK = 2;
+MediaError.MEDIA_ERR_DECODE = 3;
+MediaError.MEDIA_ERR_NONE_SUPPORTED = 4;
+
+
+// Notification API - http://docs.phonegap.com/en/1.7.0/cordova_notification_notification.md.html
+navigator.notification = {
+
+    alert: function(message, alertCallback, title, buttonName){
+        alert(message);
+        if (alertCallback)
+        {
+            alertCallback();
+        }
+    },
+    confirm: function(message, confirmCallback, title, buttonLabels){
+        var isConfirmed = confirm(message);
+        if (confirmCallback)
+        {
+            confirmCallback((isConfirmed) ? 1 : 2);
+        }
+    },
+    beep: function(times){
+        phonegapdesktop.internal.beeper(times);
+    },
+    vibrate: function(milliseconds){
+        phonegapdesktop.utility.timedPopup(20, 90, 60, 5, "Vibrate", milliseconds, "Orange");
+    }
+};
+
+
+// Storage API - http://docs.phonegap.com/en/1.7.0/cordova_storage_storage.md.html
+// NOTE: Storage functions should be provided by the browser
+
+
+// App API
+// This is not documented in the API for some reason
+navigator.app = {
+    loadUrl: function(url, props){
+    },
+    
+    cancelLoadUrl: function(){
+    },
+    
+    clearHistory: function(){
+    },
+    
+    backHistory: function(){
+    },
+    
+    exitApp: function(){
+        window.close();
+    }
 };
