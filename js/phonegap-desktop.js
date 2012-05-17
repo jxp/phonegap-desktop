@@ -68,7 +68,12 @@ phonegapdesktop.internal = {
             jsonReq = new ActiveXObject('Microsoft.XMLHTTP');
             jsonReq.open("GET", fileName, false);
         }
+        try {
         jsonReq.send();
+        }
+        catch (err) {
+        	phonegapdesktop.utility.timedPopup(10, 10, 80, 20, "PhoneGap Desktop<br/>Unable to load JSON data. Check setup<br/>" + err, 3000, "DarkRed")
+        }
         
         data = jsonReq.responseText;
         
@@ -627,7 +632,10 @@ phonegapdesktop.internal.setDynamicProperty(window.device, "device", "platform")
 phonegapdesktop.internal.setDynamicProperty(window.device, "device", "uuid");
 phonegapdesktop.internal.setDynamicProperty(window.device, "device", "version");
 
+
 // NOTE: FileAPI should be supported by browsers 
+
+
 
 // Geolocation object may already be defined by the browser, need to make sure we can override the functions if so
 navigator.geolocation = navigator.geolocation || {};
@@ -806,6 +814,8 @@ navigator.app = {
         window.close();
     }
 };
+
+
 
 window.BlobBuilder  = window.BlobBuilder || window.WebKitBlobBuilder;
 
