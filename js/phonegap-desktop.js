@@ -11,7 +11,6 @@ window.addEventListener('load', function(){
         document.onmousedown = function(e){
             phonegapdesktop.internal.dispatchTouchEvent(e, "touchstart");
             phonegapdesktop.internal.touchActive = true;
-            phonegapdesktop.internal.dispatchTouchEvent(e, "touchmove");
         };
         
         document.onmousemove = function(e){
@@ -21,7 +20,6 @@ window.addEventListener('load', function(){
         };
         
         document.onmouseup = function(e){
-            phonegapdesktop.internal.dispatchTouchEvent(e, "touchmove");
             phonegapdesktop.internal.touchActive = false;
             phonegapdesktop.internal.dispatchTouchEvent(e, "touchend");
         };
