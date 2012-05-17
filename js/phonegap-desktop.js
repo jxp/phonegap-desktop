@@ -666,6 +666,7 @@ function Media(src, mediaSuccess, mediaError, mediaStatus){
     this.ErrorCallback = mediaError;
     this.StatusCallback = mediaStatus;
     var audioObj = new Audio(src);
+    audioObj.addEventListener("ended", this.SuccessCallback);
 	audioObj.load();
     var that = this;
     
@@ -695,7 +696,6 @@ function Media(src, mediaSuccess, mediaError, mediaStatus){
 			else {
 		        phonegapdesktop.utility.timedPopup(35, 90, 60, 5, "Unsupported audio: " + (src.substr(src.lastIndexOf('.')) || src), 1000, "DarkBlue");
 			}
-            that.SuccessCallback();
         }
     };
     this.pause = function(){
