@@ -313,6 +313,132 @@
       }
     ]
   },
+  "fileSystem":{
+  	"error":[
+  	  {
+  	  	"message":"Need to fill in detail"
+  	  }
+  	],
+  	"systemObject":[
+  	  {
+  	  	"name":"temporaryObject"
+  	  },
+  	  {
+  	  	"name":"persistentObject"
+  	  }  	  
+  	],
+  	"directoryEntry":[
+  	  {
+  	  	"isFile":false,
+  	  	"isDirectory":true,
+  	  	"name":"dir1",
+  	  	"fullPath": "file:///dir1"
+  	  },
+  	  {
+  	  	"isFile":false,
+  	  	"isDirectory":true,
+  	  	"name":"dir2",
+  	  	"fullPath": "file:///dir2"
+  	  }
+  	],
+  	"metaData":[
+  		{ "modificationTime" : "2012-06-19T21:37:00"},
+  		{ "modificationTime" : "2012-04-19T21:37:00"}
+  	],
+  	"localUri":[
+  		"directoryEntry"
+  	],
+  	"readEntries":[
+  		[
+  		"fileEntry",
+  		"directoryEntry"
+  		],
+  		[
+  		"fileEntry",
+  		"fileEntry",
+  		"fileEntry"
+  		]
+  	],
+  	"fileEntry":[
+  	{
+  		"isFile":true,
+  		"isDirectory": false,
+  		"name":"file1.eg",
+  		"fullPath":"file:///dir1/file1.eg"
+  		},
+  	{
+  		"isFile":true,
+  		"isDirectory": false,
+  		"name":"file2.txt",
+  		"fullPath":"file:///dir2/file2.txt"
+  		}
+  		
+  	],
+  	"file":[
+  	{
+  		"name" : "example.jpg",
+  		"fullPath" : "file:///dir1/example.jpg",
+  		"type" : "image/jpeg",
+  		"lastModifiedDate" : "2012-06-28T21:18:00",
+  		"size": 1234567
+  	},
+  	{
+  		"name" : "sample.txt",
+  		"fullPath" : "file:///dir1/sample.txt",
+  		"type" : "text",
+  		"lastModifiedDate" : "2012-06-28T21:22:00",
+  		"size": 12345
+  	}
+  	],
+  	"fileWriter":[
+  	{
+  		"readyState":1,
+  		"fileName":"test.txt",
+  		"length":54321,
+  		"position":123
+  	},
+  	{
+  		"readyState":0,
+  		"fileName":"test2.txt",
+  		"length":123,
+  		"position":0
+  	}
+  	],
+  	"readerDataUrl":[
+  		"SGVsbG8gdGhlcmUuIFRoaXMgaXMgYSB0ZXN0IHZhbHVlIGZvciBwaG9uZWdhcCBkZXNrdG9w",
+  		"U2Vjb25kIGV4YW1wbGUgb2YgYmFzZTY0IGVuY29kZWQgdGV4dA=="
+  	],
+  	"readerText":[
+  		"Simple plain text example for fileReader",
+  		"A second fileReader plain text example"
+  	],
+  	"transferError":[
+  	{
+  		"code":0,
+  		"source":"http://localfile/one",
+  		"target":"http://phonegapdesktop.com/one",
+  		"http_status":404
+  	},
+  	{
+  		"code":0,
+  		"source":"http://localfile/two",
+  		"target":"http://phonegapdesktop.com/two",
+  		"http_status":403
+  	}
+  	],
+  	"uploadResult":[
+  	{
+  		"bytesSent": 12345,
+  		"responseCode": 200,
+  		"response":"Success"
+  	},
+  	{
+  		"bytesSent": 12345,
+  		"responseCode": 202,
+  		"response":"Accepted"
+  	}
+  	]
+  },
   "geolocation":{
     "arraySequence":false,
     "error":[
