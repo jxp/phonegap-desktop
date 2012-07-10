@@ -12,14 +12,14 @@ See the Wiki for some notes on getting started.
 
 Current Status:
 
-Merged changes from flocsy and diegolamonica  
 Added warning message if JSON data cannot be loaded  
 Added section headings and links to API docs  
-Firefox keyboard issue was caused by My Homepage extension  
+Added Cordova File API methods  
 
 
 Next Steps:
 
-Add Cordova File API methods  
-Look at using new getUserMedia method for camera capture (latest release of Chrome, Opera beta)  
+Look at using new getUserMedia method for camera capture (latest release of Chrome, Opera)  
+Add ChildBrowser plugin
+Look at emulation (not simulation) of other features
 Investigate overriding Firefox geolocation  
