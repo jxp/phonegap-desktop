@@ -20,6 +20,6 @@ Added Cordova File API methods
 Next Steps:
 
 Look at using new getUserMedia method for camera capture (latest release of Chrome, Opera)  
-Add ChildBrowser plugin
-Look at emulation (not simulation) of other features
+Add ChildBrowser plugin  
+Look at emulation (not simulation) of other features  
 Investigate overriding Firefox geolocation  
