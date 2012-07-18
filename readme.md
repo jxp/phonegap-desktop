@@ -10,16 +10,21 @@ All PhoneGap API calls are simulated and the data returned is determined by json
 See the Wiki for some notes on getting started.
 
 
-Current Status:
+###Current Status:
 
 Added warning message if JSON data cannot be loaded  
 Added section headings and links to API docs  
 Added Cordova File API methods  
 
 
-Next Steps:
+###Next Steps:
 
 Look at using new getUserMedia method for camera capture (latest release of Chrome, Opera)  
 Add ChildBrowser plugin  
 Look at emulation (not simulation) of other features  
 Investigate overriding Firefox geolocation  
+
+##License
+
+PhoneGap Desktop is licensed under Apache v2.  
+A copy of the license is included in the project or you can view it at http://www.apache.org/licenses/LICENSE-2.0
