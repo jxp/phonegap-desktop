@@ -542,13 +542,13 @@ navigator.compass = {
 		}
 	},
 	watchHeading : function(compassSuccess, compassError, compassOptions) {
-		return phonegapdesktop.internal.intervalFunction(compassSuccess, compassError, compassOptions.frequency, "compass", "heading", "error");
+		return phonegapdesktop.internal.intervalFunction(compassSuccess, compassError, (compassOptions !== undefined && compassOptions.frequency !== undefined) ? compassOptions.frequency : 100, "compass", "heading", "error");
 	},
 	clearWatch : function(watchID) {
 		phonegapdesktop.internal.cancelIntervalFunction(watchID);
 	},
 	watchHeadingFilter : function(compassSuccess, compassError, compassOptions) {
-		return phonegapdesktop.internal.intervalFunction(compassSuccess, compassError, compassOptions.frequency || 5000, "compass", "heading", "error");
+		return phonegapdesktop.internal.intervalFunction(compassSuccess, compassError, (compassOptions !== undefined && compassOptions.frequency !== undefined) ? compassOptions.frequency : 100 || 5000, "compass", "heading", "error");
 	},
 	clearWatchFilter : function(watchID) {
 		phonegapdesktop.internal.cancelIntervalFunction(watchID);
