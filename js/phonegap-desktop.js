@@ -564,7 +564,11 @@ CompassError.COMPASS_NOT_SUPPORTED = 20;
 navigator.network = {
 	connection : {}
 };
+
+// Connection information has moved to navigator.connection, leave previous network interface in 
+//	for now.
 phonegapdesktop.internal.setDynamicProperty(navigator.network.connection, "connection", "type");
+phonegapdesktop.internal.setDynamicProperty(navigator.connection, "connection", "type");
 
 var Connection = {};
 Connection.UNKNOWN = "unknown";
