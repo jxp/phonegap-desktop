@@ -12,15 +12,14 @@ See the Wiki for some notes on getting started.
 
 ###Current Status:
 
-Added warning message if JSON data cannot be loaded  
 Added section headings and links to API docs  
 Added Cordova File API methods  
-
+Moved Connection API for v2.2 and up (previous can still be used)
 
 ###Next Steps:
 
+Update features for recent API changes
 Look at using new getUserMedia method for camera capture (latest release of Chrome, Opera)  
-Add ChildBrowser plugin  
 Look at emulation (not simulation) of other features  
 Investigate overriding Firefox geolocation  
 
