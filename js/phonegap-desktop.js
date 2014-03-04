@@ -352,7 +352,7 @@ phonegapdesktop.utility = {
 
 	timedPopup : function(left, top, width, height, content, interval, borderColor, callback, callbackParams) {
 		var newDiv = document.createElement('div');
-		var styleText = "position: absolute; background-color: White; text-align: center; border-radius: 5px; font-family: 'Arial'; font-size: 0.75em; z-index: 1; padding: 4px; display: table;";
+		var styleText = "position: absolute; background-color: White; text-align: center; border-radius: 5px; font-family: 'Arial'; font-size: 0.75em; z-index: 9999; padding: 4px; display: table;";
 
 		newDiv.id = 'timedPopup';
 		newDiv.style.cssText = styleText + "left: " + left + "%; top: " + top + "%; width: " + width + "%; min-height: " + height + "%; border: solid 5px " + borderColor;
